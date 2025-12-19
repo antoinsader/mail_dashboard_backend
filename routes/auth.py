@@ -5,7 +5,7 @@ import random, string
 import jwt
 from dotenv import load_dotenv
 
-from fastapi import APIRouter, HTTPException, Depends, Cookie, Request
+from fastapi import APIRouter, HTTPException, Depends, Cookie, Request, Body
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import RedirectResponse, JSONResponse
 
@@ -13,7 +13,6 @@ from utils import exchange_code_for_token, get_google_login_url
 
 from Controllers.GmailController import GmailController
 from Controllers.UserController import  UserController
-from Controllers.ds_controller  import DatasetController
 
 load_dotenv()
 
@@ -22,7 +21,6 @@ SECRET_KEY = os.getenv("JWT_SECRET")
 router = APIRouter(prefix="/auth")
 
 user_controller = UserController()
-ds_controller = DatasetController()
 
 def create_token(user_id: int):
     return jwt.encode({"user_id": user_id}, SECRET_KEY, algorithm="HS256")
@@ -50,7 +48,11 @@ def google_user_dependency(request: Request, current_user:dict = Depends(app_use
 
 
 @router.post("/login")
-def login(code: str):
+def login(payload: dict=Body(...)):
+    code = payload.get("code")
+    if not code:
+        raise HTTPException(status_code=400, details='Missing code')
+    print(f"code {code} is trying to login")
     user = user_controller.get_by_code(code)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid code")

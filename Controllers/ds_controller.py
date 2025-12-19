@@ -15,11 +15,6 @@ class DatasetModel:
             self.user_id = row["user_id"]
             self.base_dir = row["base_dir"]
 
-    def create_manually(self, ds_name, pkl_path, user_id, base_dir):
-        self.ds_name= ds_name
-        self.pkl_path = pkl_path
-        self.user_id = user_id
-        self.base_dir = base_dir
 
     def get_dict(self):
         return {
@@ -31,7 +26,7 @@ class DatasetController:
     def __init__(self):
         self.table = TABLES["datasets"]
 
-    def create(self, ds_name, user_id, pkl_path, base_dir):
+    def create_dataset(self, ds_name, user_id, pkl_path, base_dir):
         return self.table.insert(ds_name=ds_name, user_id=user_id, pkl_path=pkl_path, base_dir=base_dir)
 
 
@@ -81,15 +76,6 @@ class DatasetController:
         return res
 
 
-    def get_doc_tfidf_terms(self, user_id, ds_id, doc_idx):
-        """
-        tfidf_terms: returning dict for the specific doc_idx:
-                [doc_id, html, doc_text, language, tokens, top_terms]
-        top_terms having list and each item having: {term, tfidf_score}
-        """
-        ds_id, nlp_proc = self.validate_ds_user(user_id, ds_id)
-        tfidf_terms = nlp_proc.get_doc_top_tfidf_terms(doc_idx)
-        return tfidf_terms
 
     def get_ds_topics(self, user_id, ds_id):
         """
@@ -100,6 +86,31 @@ class DatasetController:
         ds_id, nlp_proc = self.validate_ds_user(user_id, ds_id)
         topics_res = nlp_proc.get_topics()
         return topics_res
+
+
+class DsEmailController(DatasetController):
+    def __init__(self):
+        super().__init__()
+    
+    
+    def get_doc_tfidf_terms(self, user_id, ds_id, doc_idx):
+        """
+        tfidf_terms: returning dict for the specific doc_idx:
+                [doc_id, html, doc_text, language, tokens, top_terms]
+        top_terms having list and each item having: {term, tfidf_score}
+        """
+        ds_id, nlp_proc = self.validate_ds_user(user_id, ds_id)
+        tfidf_terms = nlp_proc.get_doc_top_tfidf_terms(doc_idx)
+        return tfidf_terms
+
+    def get_doc_summary(self, user_id, ds_id, doc_idx):
+        """
+            Return doc summary
+        """
+        ds_id, nlp_proc = self.validate_ds_user(user_id, ds_id)
+        summary = nlp_proc.get_doc_top_tfidf_terms(doc_idx)
+        return summary
+        
 
 nlp_processors = {}
 def init_user_nlp_processors():

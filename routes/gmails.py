@@ -53,7 +53,7 @@ def save_ds(request:Request, body: dict, current_user: dict=Depends(app_user_dep
     base_dir = os.path.join(DS_ALL_DIR,  f"emails_{save_name}_details")
     os.makedirs(base_dir, exist_ok=True)
     ds_control = DatasetController()
-    ds_id = ds_control.create(ds_name=save_name, user_id=user_id, pkl_path=save_path, base_dir=base_dir)
+    ds_id = ds_control.create_dataset(ds_name=save_name, user_id=user_id, pkl_path=save_path, base_dir=base_dir)
     save_pkl(draft_mails, save_path)
     remove_file(DRAFT_USER_DIR + f"/user_{current_user['id']}.pkl")
     init_user_nlp_processors()

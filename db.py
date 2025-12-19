@@ -76,7 +76,8 @@ class TableBase:
         cols = []
         values = []
         for k, v in criteria.items():
-            assert k in self.get_columns_names()
+            if k not in self.get_columns_names():
+                raise ValueError(f"Invalid column name: {k}")
             cols.append(f"{k}=?")
             values.append(v)
 

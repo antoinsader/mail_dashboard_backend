@@ -9,10 +9,12 @@ class UserController:
 
 
     def get_by_code(self, code):
-        return self.table.select_where(code=code)[0]
+        results = self.table.select_where(code=code)
+        return results[0] if results else None
 
     def get_by_id(self, user_id):
-        return self.table.select_where(id=user_id)[0]
+        results = self.table.select_where(id=user_id)
+        return results[0] if results else None
 
     def get_by_gmail(self, gmail):
         users = self.table.select_where(gmail=gmail)

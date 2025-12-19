@@ -38,14 +38,6 @@ def get_ds_stats(body: DsRequestBody, current_user: dict = Depends(app_user_depe
     except  RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/get_doc_tfidf")
-def get_doc_tfidf(body: DsRequestBody, current_user: dict = Depends(app_user_dependency)):
-    try:
-        tfidf_terms = ds_controller.get_doc_tfidf_terms(current_user["id"], body.ds_id, body.doc_idx)
-        return tfidf_terms
-    except  RuntimeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/get_ds_topics")
 def get_ds_topics(body: DsRequestBody, current_user: dict = Depends(app_user_dependency)):
